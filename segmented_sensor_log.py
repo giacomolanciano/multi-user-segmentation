@@ -7,11 +7,23 @@ from topological_compat_matrix import TopologicalCompatMatrix
 
 class SegmentedSensorLog(object):
     def __init__(self, sensor_log, top_compat_matrix, threshold, log_entry_delimiter='\t', sensor_id_pos=2):
+        """
+        Build segmented version of the given log considering the given probabilistic topological compatibility matrix.
+        
+        :type sensor_log: file
+        :type top_compat_matrix: TopologicalCompatMatrix
+        :type threshold: float
+        :param sensor_log: the file containing the sensor log.
+        :param top_compat_matrix: the topological compatibility matrix of the sensor log.
+        :param threshold: the threshold to reach for a direct succession to be significant. 
+        :param log_entry_delimiter: the log entry fields delimiter.
+        :param sensor_id_pos: the position of the sensor id in a log entry.
+        """
         self.sensor_log = csv.reader(sensor_log, delimiter=log_entry_delimiter)
         self.top_compat_matrix = top_compat_matrix
         self.segments = []
 
-        s0 = next(self.sensor_log, None)
+        s0 = next(self.sensor_log, None)  # consider a sliding window of two events per step
         s1 = next(self.sensor_log, None)
         segment = [s0]
         while s0 is not None and s1 is not None:

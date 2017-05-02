@@ -14,6 +14,7 @@ class TopologicalCompatMatrix(object):
     def __init__(self, sensor_log, log_entry_delimiter='\t', sensor_id_pos=2):
         """
         Build the topological compatibility matrix associated with the given sensor log.
+        
         :type sensor_log: file
         :param sensor_log: the file containing the sensor log.
         :param log_entry_delimiter: the log entry fields delimiter.
@@ -23,7 +24,7 @@ class TopologicalCompatMatrix(object):
         self.prob_matrix = {}
         self.sensors_occurrences = {}
 
-        s0 = next(self.sensor_log, None)
+        s0 = next(self.sensor_log, None)  # consider a sliding window of two events per step
         s1 = next(self.sensor_log, None)
         self.sensors_occurrences[s0[sensor_id_pos]] = 1
         while s0 is not None and s1 is not None:
@@ -54,6 +55,7 @@ class TopologicalCompatMatrix(object):
     def add_sensor(self, sensor):
         """
         Add to matrix a new row and a new column related to the given sensor (if not already existing).
+        
         :type sensor: str
         :param sensor: the sensor identifier.
         """
