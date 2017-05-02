@@ -1,10 +1,16 @@
 import os
 
 import unicodecsv as csv
-from pandas import DataFrame
+import seaborn as sn
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 class TopologicalCompatMatrix(object):
+    PLOT_SIZE = 10
+    Y_LABELS_ROT = 0
+    X_LABELS_ROT = 90
+
     def __init__(self, sensor_log, log_entry_delimiter='\t', sensor_id_pos=2):
         """
         Build the topological compatibility matrix associated with the given sensor log.
@@ -63,10 +69,17 @@ class TopologicalCompatMatrix(object):
         for s in self.matrix.keys():
             self.matrix[s][sensor] = 0
 
+    def plot(self):
+        df = pd.DataFrame(self.matrix)
+        plt.figure(figsize=(self.PLOT_SIZE, self.PLOT_SIZE))
+        sn.heatmap(df, square=True)
+        plt.yticks(rotation=self.Y_LABELS_ROT)
+        plt.xticks(rotation=self.X_LABELS_ROT)
+        plt.show()
+
 
 if __name__ == '__main__':
     SRC = os.path.join('data', 'dataset_attivita_non_innestate.txt')
     with open(SRC, 'rb') as log:
         tcm = TopologicalCompatMatrix(log)
-    df = DataFrame(tcm.matrix)
-    print(df)
+    tcm.plot()
