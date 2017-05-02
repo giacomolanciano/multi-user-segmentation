@@ -20,7 +20,7 @@ class TopologicalCompatMatrix(object):
         :param sensor_id_pos: the position of the sensor id in a log entry.
         """
         self.sensor_log = csv.reader(sensor_log, delimiter=log_entry_delimiter)
-        self.matrix = {}
+        self.prob_matrix = {}
         self.sensors_occurrences = {}
 
         s0 = next(self.sensor_log, None)
@@ -39,17 +39,17 @@ class TopologicalCompatMatrix(object):
             # add sensors ids to matrix and update succession counter
             self.add_sensor(s0_id)
             self.add_sensor(s1_id)
-            self.matrix[s0_id][s1_id] += 1
+            self.prob_matrix[s0_id][s1_id] += 1
 
             # prepare next step
             s0 = s1
             s1 = next(self.sensor_log, None)
 
-        for s_row in self.matrix:
-            for s_col in self.matrix[s_row]:
-                if self.matrix[s_row][s_col] != 0:
+        for s_row in self.prob_matrix:
+            for s_col in self.prob_matrix[s_row]:
+                if self.prob_matrix[s_row][s_col] != 0:
                     # normalize cell value with respect to antecedent total occurrences
-                    self.matrix[s_row][s_col] /= self.sensors_occurrences[s_row]
+                    self.prob_matrix[s_row][s_col] /= self.sensors_occurrences[s_row]
 
     def add_sensor(self, sensor):
         """
@@ -57,22 +57,22 @@ class TopologicalCompatMatrix(object):
         :type sensor: str
         :param sensor: the sensor identifier.
         """
-        if sensor in self.matrix:
+        if sensor in self.prob_matrix:
             return  # the sensor is known, no need to add
-        if not self.matrix:
+        if not self.prob_matrix:
             # the matrix is empty, add the first sensor only
-            self.matrix[sensor] = {sensor: 0}
+            self.prob_matrix[sensor] = {sensor: 0}
             return
         # add a row for the new sensor
-        self.matrix[sensor] = {key: 0 for key in self.matrix.keys()}
+        self.prob_matrix[sensor] = {key: 0 for key in self.prob_matrix.keys()}
         # add a col for the new sensor
-        for s in self.matrix.keys():
-            self.matrix[s][sensor] = 0
+        for s in self.prob_matrix.keys():
+            self.prob_matrix[s][sensor] = 0
 
     def plot(self):
-        df = pd.DataFrame(self.matrix)
+        df = pd.DataFrame(self.prob_matrix)
         plt.figure(figsize=(self.PLOT_SIZE, self.PLOT_SIZE))
-        sn.heatmap(df, square=True)
+        sn.heatmap(df, square=True, cmap='Blues', linewidths=1)
         plt.yticks(rotation=self.Y_LABELS_ROT)
         plt.xticks(rotation=self.X_LABELS_ROT)
         plt.show()
