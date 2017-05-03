@@ -5,31 +5,31 @@ import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from constants import DATA_FOLDER, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
+
 
 class TopologicalCompatMatrix(object):
     PLOT_SIZE = 10
     Y_LABELS_ROT = 0
     X_LABELS_ROT = 90
 
-    def __init__(self, sensor_log, log_entry_delimiter='\t', sensor_id_pos=2):
+    def __init__(self, sensor_log):
         """
         Build the topological compatibility matrix associated with the given sensor log.
         
         :type sensor_log: file
-        :param sensor_log: the file containing the sensor log.
-        :param log_entry_delimiter: the log entry fields delimiter.
-        :param sensor_id_pos: the position of the sensor id in a log entry.
+        :param sensor_log: the tab-separated file containing the sensor log.
         """
-        self.sensor_log = csv.reader(sensor_log, delimiter=log_entry_delimiter)
+        self.sensor_log = csv.reader(sensor_log, delimiter=LOG_ENTRY_DELIMITER)
         self.prob_matrix = {}
         self.sensors_occurrences = {}
 
         s0 = next(self.sensor_log, None)  # consider a sliding window of two events per step
         s1 = next(self.sensor_log, None)
-        self.sensors_occurrences[s0[sensor_id_pos]] = 1
+        self.sensors_occurrences[s0[SENSOR_ID_POS]] = 1
         while s0 is not None and s1 is not None:
-            s0_id = s0[sensor_id_pos]
-            s1_id = s1[sensor_id_pos]
+            s0_id = s0[SENSOR_ID_POS]
+            s1_id = s1[SENSOR_ID_POS]
 
             # increase sensor occurrences
             try:
@@ -77,11 +77,12 @@ class TopologicalCompatMatrix(object):
         sn.heatmap(df, square=True, cmap='Blues', linewidths=1)
         plt.yticks(rotation=self.Y_LABELS_ROT)
         plt.xticks(rotation=self.X_LABELS_ROT)
+        print(df)
         plt.show()
 
 
 if __name__ == '__main__':
-    SRC = os.path.join('data', 'dataset_attivita_non_innestate.txt')
+    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate.tsv')
     with open(SRC, 'rb') as log:
         tcm = TopologicalCompatMatrix(log)
     tcm.plot()
