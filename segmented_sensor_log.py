@@ -36,9 +36,9 @@ class SegmentedSensorLog(object):
             elif segment:
                 # the direct succession value is under the threshold (and the current segment is non-empty)
                 self.segments.append(list(segment))  # store a copy of the segment so far
-                segment = [list(s1)]                 # start the new segment from the second item in window
+                segment = [list(s1)]                 # start the new segment from the second item in the window
 
-            # prepare next step
+            # prepare next step (slide the window by one position)
             s0 = s1
             s1 = next(self.sensor_log, None)
 

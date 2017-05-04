@@ -40,14 +40,14 @@ class TopologicalCompatMatrix(object):
             self.add_sensor(s1_id)
             self.prob_matrix[s0_id][s1_id] += 1
 
-            # prepare next step
+            # prepare next step (slide the window by one position)
             s0 = s1
             s1 = next(self.sensor_log, None)
 
         for s_row in self.prob_matrix:
             for s_col in self.prob_matrix[s_row]:
                 if self.prob_matrix[s_row][s_col] != 0:
-                    # normalize cell value with respect to antecedent total occurrences
+                    # normalize cell value with respect to predecessor total occurrences
                     self.prob_matrix[s_row][s_col] /= self.sensors_occurrences[s_row]
 
     def add_sensor(self, sensor):
@@ -114,7 +114,9 @@ class TopologicalCompatMatrix(object):
             plt.get_current_fig_manager().window.showMaximized()
 
         sn.heatmap(df, vmin=0.0, vmax=1.0, annot=show_values, square=(not show_values), cmap='Blues', linewidths=1)
+        plt.ylabel('predecessor')
         plt.yticks(rotation=Y_LABELS_ROT)
+        plt.xlabel('successor')
         plt.xticks(rotation=X_LABELS_ROT)
         fig.tight_layout()
         plt.show()
@@ -124,4 +126,4 @@ if __name__ == '__main__':
     SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered.tsv')
     with open(SRC, 'rb') as log:
         tcm = TopologicalCompatMatrix(log)
-    tcm.plot(show_values=True)
+    tcm.plot(show_values=False)
