@@ -107,6 +107,7 @@ class TopologicalCompatMatrix(object):
             df = pd.DataFrame(self.get_deterministic_matrix(threshold))
         else:
             df = pd.DataFrame(self.prob_matrix)
+        df = df.T  # transpose the DataFrame to consider the keys of prob_matrix dict as rows
 
         fig = plt.figure()
         if show_values:
@@ -123,4 +124,4 @@ if __name__ == '__main__':
     SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered.tsv')
     with open(SRC, 'rb') as log:
         tcm = TopologicalCompatMatrix(log)
-    tcm.plot()
+    tcm.plot(show_values=True)
