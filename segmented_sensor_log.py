@@ -25,17 +25,18 @@ class SegmentedSensorLog(object):
 
         s0 = next(self.sensor_log, None)  # consider a sliding window of two events per step
         s1 = next(self.sensor_log, None)
-        segment = [s0]
+        segment = [list(s0)]
         while s0 is not None and s1 is not None:
             s0_id = s0[SENSOR_ID_POS]
             s1_id = s1[SENSOR_ID_POS]
 
             if self.top_compat_matrix.prob_matrix[s0_id][s1_id] >= threshold:
-                segment.append(s1)  # if above threshold, continue segment
+                # the direct succession value is above the threshold
+                segment.append(list(s1))  # continue the segment
             elif segment:
-                # otherwise (if segment not empty), store a copy of the segment and restart
-                self.segments.append(list(segment))
-                segment = []
+                # the direct succession value is under the threshold (and the current segment is non-empty)
+                self.segments.append(list(segment))  # store a copy of the segment so far
+                segment = [list(s1)]                 # start the new segment from the second item in window
 
             # prepare next step
             s0 = s1
@@ -52,5 +53,3 @@ if __name__ == '__main__':
     with open(SRC, 'rb') as log:
         ssl = SegmentedSensorLog(log, tcm, THRESHOLD)
     pprint(ssl.segments)
-
-    tcm.plot()
