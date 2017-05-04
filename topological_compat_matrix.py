@@ -9,9 +9,7 @@ from constants import DATA_FOLDER, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
 
 
 class TopologicalCompatMatrix(object):
-    PLOT_SIZE = 10
-    Y_LABELS_ROT = 0
-    X_LABELS_ROT = 90
+    THRESHOLD_ERROR = 'The threshold must be a value between 0 and 1 (included).'
 
     def __init__(self, sensor_log):
         """
@@ -71,18 +69,58 @@ class TopologicalCompatMatrix(object):
         for s in self.prob_matrix.keys():
             self.prob_matrix[s][sensor] = 0
 
-    def plot(self):
-        df = pd.DataFrame(self.prob_matrix)
-        plt.figure(figsize=(self.PLOT_SIZE, self.PLOT_SIZE))
-        sn.heatmap(df, square=True, cmap='Blues', linewidths=1)
-        plt.yticks(rotation=self.Y_LABELS_ROT)
-        plt.xticks(rotation=self.X_LABELS_ROT)
-        print(df)
+    def get_deterministic_matrix(self, threshold):
+        """
+        Build a deterministic copy of the (probabilistic) topological compatibility matrix where all cells whose value 
+        is greater or equal to the given threshold are set to 1 (0 otherwise).
+        
+        :type threshold: float
+        :param threshold: a value between 0 and 1.
+        :return: a dict of dicts representing the deterministic matrix.
+        """
+        if threshold < 0 or threshold > 1:
+            raise ValueError(self.THRESHOLD_ERROR)
+
+        det_matrix = {}
+        for row in self.prob_matrix.keys():
+            det_matrix[row] = {}
+            for col in self.prob_matrix[row].keys():
+                det_matrix[row][col] = 1 if self.prob_matrix[row][col] >= threshold else 0
+        return det_matrix
+
+    def plot(self, threshold=None, show_values=False):
+        """
+        Plot the topological compatibility matrix, either probabilistic or deterministic version (if threshold is set).
+        Optionally, cells' values can be shown.
+        
+        :type threshold: float
+        :type show_values: bool
+        :param threshold: a value between 0 and 1.
+        :param show_values: a flag stating whether the cells' values must be shown or not. 
+        """
+        Y_LABELS_ROT = 0
+        X_LABELS_ROT = 90
+
+        if threshold:
+            if threshold < 0 or threshold > 1:
+                raise ValueError(self.THRESHOLD_ERROR)
+            df = pd.DataFrame(self.get_deterministic_matrix(threshold))
+        else:
+            df = pd.DataFrame(self.prob_matrix)
+
+        fig = plt.figure()
+        if show_values:
+            plt.get_current_fig_manager().window.showMaximized()
+
+        sn.heatmap(df, vmin=0.0, vmax=1.0, annot=show_values, square=(not show_values), cmap='Blues', linewidths=1)
+        plt.yticks(rotation=Y_LABELS_ROT)
+        plt.xticks(rotation=X_LABELS_ROT)
+        fig.tight_layout()
         plt.show()
 
 
 if __name__ == '__main__':
-    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate.tsv')
+    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered.tsv')
     with open(SRC, 'rb') as log:
         tcm = TopologicalCompatMatrix(log)
     tcm.plot()
