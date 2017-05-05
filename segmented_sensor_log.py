@@ -1,6 +1,8 @@
 import os
 
 import unicodecsv as csv
+import seaborn as sn
+import matplotlib.pyplot as plt
 from pprint import pprint
 
 from constants import DATA_FOLDER, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
@@ -42,6 +44,23 @@ class SegmentedSensorLog(object):
             s0 = s1
             s1 = next(self.sensor_log, None)
 
+    def plot_stats(self):
+        segments_num = len(self.segments)
+        segments_lengths = [len(s) for s in self.segments]
+
+        print('segments num:', segments_num)
+        print('min length:  ', len(min(self.segments, key=len)))
+        print('max length:  ', len(max(self.segments, key=len)))
+        print('avg length:  ', sum(segments_lengths) / segments_num)
+
+        plt.figure()
+        sn.distplot(segments_lengths)
+
+        plt.figure()
+        sn.tsplot(segments_lengths)
+
+        plt.show()
+
 
 if __name__ == '__main__':
     SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered.tsv')
@@ -53,3 +72,4 @@ if __name__ == '__main__':
     with open(SRC, 'rb') as log:
         ssl = SegmentedSensorLog(log, tcm, THRESHOLD)
     pprint(ssl.segments)
+    ssl.plot_stats()
