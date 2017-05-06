@@ -2,7 +2,7 @@ import os
 
 import unicodecsv as csv
 
-from constants import DATA_FOLDER, LOG_EXT, LOG_ENTRY_DELIMITER, SENSOR_STATE_POS, SENSOR_STATE_ON
+from utils.constants import DATA_FOLDER, LOG_EXT, LOG_ENTRY_DELIMITER, SENSOR_STATE_POS, SENSOR_STATE_ON
 
 
 def filter_sensor_log(sensor_log):

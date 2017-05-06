@@ -1,11 +1,11 @@
 import os
 
-import unicodecsv as csv
-import seaborn as sn
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sn
+import unicodecsv as csv
 
-from constants import DATA_FOLDER, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
+from utils.constants import DATA_FOLDER, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
 
 
 class TopologicalCompatMatrix(object):
@@ -113,7 +113,7 @@ class TopologicalCompatMatrix(object):
         if show_values:
             plt.get_current_fig_manager().window.showMaximized()
 
-        sn.heatmap(df, vmin=0.0, vmax=1.0, annot=show_values, square=(not show_values), cmap='Blues', linewidths=1)
+        sn.heatmap(df, vmin=0.0, vmax=1.0, annot=show_values, square=(not show_values), cmap='Reds', linewidths=1)
         plt.ylabel('predecessor')
         plt.yticks(rotation=Y_LABELS_ROT)
         plt.xlabel('successor')

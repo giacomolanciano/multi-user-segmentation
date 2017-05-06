@@ -1,12 +1,12 @@
 import os
-
-import unicodecsv as csv
-import seaborn as sn
-import matplotlib.pyplot as plt
 from pprint import pprint
 
-from constants import DATA_FOLDER, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
+import matplotlib.pyplot as plt
+import seaborn as sn
+import unicodecsv as csv
+
 from topological_compat_matrix import TopologicalCompatMatrix
+from utils.constants import DATA_FOLDER, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
 
 
 class SegmentedSensorLog(object):
