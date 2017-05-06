@@ -18,7 +18,7 @@ def filter_sensor_log(sensor_log):
     with open(dest, 'wb') as filtered_log:
         dest_writer = csv.writer(filtered_log, delimiter=LOG_ENTRY_DELIMITER)
 
-        entry = next(sensor_log, None)
+        entry = next(src_reader, None)
         while entry is not None:
             if entry[SENSOR_STATE_POS] == SENSOR_STATE_ON:
                 dest_writer.writerow(entry)
@@ -26,6 +26,6 @@ def filter_sensor_log(sensor_log):
 
 
 if __name__ == '__main__':
-    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_innestate.tsv')
+    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate.tsv')
     with open(SRC, 'rb') as log:
         filter_sensor_log(log)
