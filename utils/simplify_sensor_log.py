@@ -21,6 +21,7 @@ def simplify_sensor_log(sensor_log, readable=True):
                'V', 'W', 'X', 'Y', 'Z']
 
     dest = sensor_log.name[:-len(LOG_EXT)] + '_simplified.txt'
+    dest_dict = sensor_log.name[:-len(LOG_EXT)] + '_simplified_dict.txt'
     src_reader = csv.reader(sensor_log, delimiter=LOG_ENTRY_DELIMITER)
     sensor_id_dict = {}
 
@@ -41,8 +42,12 @@ def simplify_sensor_log(sensor_log, readable=True):
             simplified_log.write(translation + '\n')
             entry = next(src_reader, None)
 
+    with open(dest_dict, 'w') as simplified_log_dict:
+        for k, v in sensor_id_dict.items():
+            simplified_log_dict.write('%s \t\t %s\n' % (v, k))
+
 
 if __name__ == '__main__':
-    SRC = os.path.join(DATA_FOLDER, 'dataset_first_day_filtered.tsv')
+    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered.tsv')
     with open(SRC, 'rb') as log:
         simplify_sensor_log(log)
