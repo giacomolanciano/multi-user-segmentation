@@ -12,7 +12,7 @@ def filter_sensor_log(sensor_log):
     :type sensor_log: file
     :param sensor_log: the tab-separated file containing the sensor log.
     """
-    dest = sensor_log.name[:-len(LOG_EXT)] + '_filtered' + LOG_EXT
+    dest = os.path.splitext(sensor_log.name)[0] + '_filtered' + LOG_EXT
     src_reader = csv.reader(sensor_log, delimiter=LOG_ENTRY_DELIMITER)
 
     with open(dest, 'wb') as filtered_log:

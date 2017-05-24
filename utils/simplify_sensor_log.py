@@ -2,7 +2,10 @@ import os
 
 import unicodecsv as csv
 
-from utils.constants import DATA_FOLDER, LOG_EXT, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
+from utils.constants import DATA_FOLDER, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
+
+SYMBOLS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+           'V', 'W', 'X', 'Y', 'Z']
 
 
 def simplify_sensor_log(sensor_log, readable=True):
@@ -17,11 +20,9 @@ def simplify_sensor_log(sensor_log, readable=True):
     :param sensor_log: the tab-separated file containing the sensor log.
     :param readable: whether the mapping between sensor ids and letters has to be computed or not.
     """
-    SYMBOLS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
-               'V', 'W', 'X', 'Y', 'Z']
-
-    dest = sensor_log.name[:-len(LOG_EXT)] + '_simplified.txt'
-    dest_dict = sensor_log.name[:-len(LOG_EXT)] + '_simplified_dict.txt'
+    file_basename = os.path.splitext(sensor_log.name)[0]
+    dest = file_basename + '_simplified.txt'
+    dest_dict = file_basename + '_simplified_dict.txt'
     src_reader = csv.reader(sensor_log, delimiter=LOG_ENTRY_DELIMITER)
     sensor_id_dict = {}
 

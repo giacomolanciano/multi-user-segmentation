@@ -2,7 +2,7 @@ import os
 
 import unicodecsv as csv
 
-from utils.constants import DATA_FOLDER, LOG_EXT, LOG_ENTRY_DELIMITER
+from utils.constants import DATA_FOLDER, LOG_ENTRY_DELIMITER
 
 
 def convert_to_csv(sensor_log):
@@ -12,7 +12,7 @@ def convert_to_csv(sensor_log):
     :type sensor_log: file
     :param sensor_log: the tab-separated file containing the sensor log.
     """
-    dest = sensor_log.name[:-len(LOG_EXT)] + '.csv'
+    dest = os.path.splitext(sensor_log.name)[0] + '.csv'
     src_reader = csv.reader(sensor_log, delimiter=LOG_ENTRY_DELIMITER)
 
     with open(dest, 'wb') as csv_log:

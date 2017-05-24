@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sn
 import unicodecsv as csv
 
-from topological_compat_matrix import TopologicalCompatMatrix
+from models.topological_compat_matrix import TopologicalCompatMatrix
 from utils.constants import DATA_FOLDER, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
 
 
@@ -86,8 +86,8 @@ if __name__ == '__main__':
     import pickle
     SRC = os.path.join(DATA_FOLDER, 'sequences.pkl')
 
-    with open(SRC, 'rb') as s:
-        segs = dict(pickle.load(s))
+    with open(SRC, 'rb') as src:
+        segs = dict(pickle.load(src))
 
     ssl = SegmentedSensorLog(segments=segs.keys())
 

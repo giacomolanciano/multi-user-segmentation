@@ -10,6 +10,8 @@ from utils.constants import DATA_FOLDER, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
 
 class TopologicalCompatMatrix(object):
     THRESHOLD_ERROR = 'The threshold must be a value between 0 and 1 (included).'
+    Y_LABELS_ROT = 0
+    X_LABELS_ROT = 90
 
     def __init__(self, sensor_log):
         """
@@ -98,9 +100,6 @@ class TopologicalCompatMatrix(object):
         :param threshold: a value between 0 and 1.
         :param show_values: a flag stating whether the cells' values must be shown or not. 
         """
-        Y_LABELS_ROT = 0
-        X_LABELS_ROT = 90
-
         if threshold:
             if threshold < 0 or threshold > 1:
                 raise ValueError(self.THRESHOLD_ERROR)
@@ -115,9 +114,9 @@ class TopologicalCompatMatrix(object):
 
         sn.heatmap(df, vmin=0.0, vmax=1.0, annot=show_values, square=(not show_values), cmap='Reds', linewidths=1)
         plt.ylabel('predecessor')
-        plt.yticks(rotation=Y_LABELS_ROT)
+        plt.yticks(rotation=self.Y_LABELS_ROT)
         plt.xlabel('successor')
-        plt.xticks(rotation=X_LABELS_ROT)
+        plt.xticks(rotation=self.X_LABELS_ROT)
         fig.tight_layout()
         plt.show()
 
