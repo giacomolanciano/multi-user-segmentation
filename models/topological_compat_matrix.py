@@ -13,12 +13,13 @@ class TopologicalCompatMatrix(object):
     Y_LABELS_ROT = 0
     X_LABELS_ROT = 90
 
-    def __init__(self, sensor_log):
+    def __init__(self, sensor_log, sensor_id_pos=SENSOR_ID_POS):
         """
         Build the topological compatibility matrix associated with the given sensor log.
         
         :type sensor_log: file
         :param sensor_log: the tab-separated file containing the sensor log.
+        :param sensor_id_pos: the position of the sensor id in the log entry.
         """
         self.sensor_log = csv.reader(sensor_log, delimiter=LOG_ENTRY_DELIMITER)
         self.prob_matrix = {}
@@ -26,10 +27,10 @@ class TopologicalCompatMatrix(object):
 
         s0 = next(self.sensor_log, None)  # consider a sliding window of two events per step
         s1 = next(self.sensor_log, None)
-        self.sensors_occurrences[s0[SENSOR_ID_POS]] = 1
+        self.sensors_occurrences[s0[sensor_id_pos]] = 1
         while s0 is not None and s1 is not None:
-            s0_id = s0[SENSOR_ID_POS]
-            s1_id = s1[SENSOR_ID_POS]
+            s0_id = s0[sensor_id_pos]
+            s1_id = s1[sensor_id_pos]
 
             # increase sensor occurrences
             try:

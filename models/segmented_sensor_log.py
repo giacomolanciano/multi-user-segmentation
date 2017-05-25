@@ -1,16 +1,17 @@
 import os
-from pprint import pprint
 
 import matplotlib.pyplot as plt
 import seaborn as sn
 import unicodecsv as csv
 
 from models.topological_compat_matrix import TopologicalCompatMatrix
+from sequence_classification.sequence_classifier_input import SequenceClassifierInput
 from utils.constants import DATA_FOLDER, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
 
 
 class SegmentedSensorLog(object):
-    def __init__(self, sensor_log=None, top_compat_matrix=None, threshold=None, segments=None):
+    def __init__(self, sensor_log=None, top_compat_matrix=None, threshold=None, segments=None,
+                 sensor_id_pos=SENSOR_ID_POS):
         """
         Build segmented version of the given log considering the given probabilistic topological compatibility matrix.
         
@@ -21,6 +22,7 @@ class SegmentedSensorLog(object):
         :param top_compat_matrix: the topological compatibility matrix of the sensor log.
         :param threshold: the threshold to reach for a direct succession to be significant.
         :param segments: a precomputed list of segments. 
+        :param sensor_id_pos: the position of the sensor id in the log entry. 
         """
         if segments:
             self.segments = segments
@@ -34,8 +36,8 @@ class SegmentedSensorLog(object):
             s1 = next(self.sensor_log, None)
             segment = [list(s0)]
             while s0 is not None and s1 is not None:
-                s0_id = s0[SENSOR_ID_POS]
-                s1_id = s1[SENSOR_ID_POS]
+                s0_id = s0[sensor_id_pos]
+                s1_id = s1[sensor_id_pos]
 
                 if self.top_compat_matrix.prob_matrix[s0_id][s1_id] >= threshold:
                     # the direct succession value is above the threshold
@@ -74,22 +76,35 @@ class SegmentedSensorLog(object):
 
 
 if __name__ == '__main__':
-    # SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered.tsv')
-    # THRESHOLD = 0.1
+    # import pickle
+    # from pprint import pprint
+
+    # SRC = os.path.join(DATA_FOLDER, 'sequences.pkl')
     #
-    # with open(SRC, 'rb') as log:
-    #     tcm = TopologicalCompatMatrix(log)
+    # with open(SRC, 'rb') as src:
+    #     segs = dict(pickle.load(src))
     #
-    # with open(SRC, 'rb') as log:
-    #     ssl = SegmentedSensorLog(log, tcm, THRESHOLD)
+    # ssl = SegmentedSensorLog(segments=segs.keys())
 
-    import pickle
-    SRC = os.path.join(DATA_FOLDER, 'sequences.pkl')
+    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered_simplified.txt')
+    THRESHOLD = 0.1
 
-    with open(SRC, 'rb') as src:
-        segs = dict(pickle.load(src))
+    with open(SRC, 'rb') as log:
+        tcm = TopologicalCompatMatrix(log, sensor_id_pos=0)
 
-    ssl = SegmentedSensorLog(segments=segs.keys())
+    with open(SRC, 'rb') as log:
+        ssl = SegmentedSensorLog(log, tcm, THRESHOLD, sensor_id_pos=0)
 
-    pprint(ssl.segments)
-    ssl.plot_stats(time_series=False)
+    GOOD = 'GOOD'
+    sequences = []
+    labels = []
+    for segment_ in ssl.segments:
+        if len(segment_) > 1:
+            sequence = ''
+            for c in segment_:
+                sequence += c[0]
+            sequences.append(sequence)
+            labels.append(GOOD)
+
+    clf_input = SequenceClassifierInput(sequences=sequences, labels=labels)
+    clf_input.get_spectrum_train_test_data()

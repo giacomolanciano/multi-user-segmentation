@@ -53,35 +53,53 @@ class MissingInputError(Exception):
 
 
 class SequenceClassifierInput(object):
-    def __init__(self, considered_labels=None, cached_dataset=None, table_name=None, inputs_per_label=1000,
-                 ngrams_length=3, test_size=0.25, random_state=42, progress=True):
+    def __init__(self,
+                 sequences: list = None,
+                 labels: list = None,
+                 considered_labels: list = None,
+                 table_name: str = None,
+                 inputs_per_label: int = 1000,
+                 cached_dataset: str = None,
+                 ngrams_length: int = 3,
+                 test_size: float = 0.25,
+                 random_state: int = 42,
+                 progress: bool = True
+                 ):
         """
         A class representing the input data to be fed to a sequence classifier.
         
-        :param considered_labels: the list of relevant labels.
-        :param cached_dataset: the name of the dataset dump to be restored.
+        :param sequences: the sequences to be used for classification task.
+        :param labels: the labels of the sequences to be used for classification task.
+        :param considered_labels: the list of relevant labels to be retrieved.
         :param table_name: the table where training inputs are stored.
         :param inputs_per_label: how many inputs per label to be retrieved.
+        :param cached_dataset: the name of the dataset dump to be restored.
         :param ngrams_length: the length of a single shingle.
         :param test_size: the size of the test split.
         :param random_state: the random state.
         :param progress: whether progress message has to be shown to the user or not.
         """
-        self.progress = progress
+        self.sequences = sequences
+        self.labels = labels
         self.considered_labels = considered_labels
-        self.cached_dataset = cached_dataset
         self.table_name = table_name
         self.inputs_per_label = inputs_per_label
+        self.cached_dataset = cached_dataset
         self.ngrams_length = ngrams_length
         self.test_size = test_size
         self.random_state = random_state
+        self.progress = progress
         self.time = None
         self.dump_basename = None
 
         # initialize training and test splits (both data and labels)
-        if considered_labels:
+        if sequences and labels:
+            self.considered_labels = list(set(labels))
+            self.table_name = None
             self.cached_dataset = None
+        elif considered_labels and table_name:
             self.labels_num = len(considered_labels)
+            self.cached_dataset = None
         elif cached_dataset:
             dataset_dict = self._load_dataset(cached_dataset)
             self.dump_basename = cached_dataset
@@ -99,7 +117,14 @@ class SequenceClassifierInput(object):
         
         :return: the dataset splits to be fed to RNN.
         """
-        if self.cached_dataset:
+        if self.sequences and self.labels:
+            train_data, test_data, train_labels, test_labels = train_test_split(self.sequences,
+                                                                                self.labels,
+                                                                                test_size=self.test_size,
+                                                                                random_state=self.random_state)
+            self.time = int(time.time())
+            self._dump_dataset((train_data, test_data, train_labels, test_labels))
+        elif self.cached_dataset:
             # return cached intermediate dataset if exists
             try:
                 dataset_dict = self._load_dataset(self.cached_dataset, suffix=RNN_SUFFIX)
@@ -154,7 +179,14 @@ class SequenceClassifierInput(object):
         
         :return: the dataset splits to be fed to SVM (Spectrum Kernel).
         """
-        if self.cached_dataset:
+        if self.sequences and self.labels:
+            train_data, test_data, train_labels, test_labels = train_test_split(self.sequences,
+                                                                                self.labels,
+                                                                                test_size=self.test_size,
+                                                                                random_state=self.random_state)
+            self.time = int(time.time())
+            self._dump_dataset((train_data, test_data, train_labels, test_labels))
+        elif self.cached_dataset:
             # return cached intermediate dataset if exists
             try:
                 dataset_dict = self._load_dataset(self.cached_dataset, suffix=SPECTRUM_SUFFIX)
@@ -182,7 +214,7 @@ class SequenceClassifierInput(object):
         """
         Retrieve training pairs given a list of relevant labels.
         
-        :return: two lists containing training data and corresponding labels respectively.
+        :return: training and test splits (both data and corresponding labels).
         """
         data = []
         labels = []
@@ -326,8 +358,9 @@ class SequenceClassifierInput(object):
             dataset_dict.update(kwargs)
 
         if not self.dump_basename:
+            size = len(dataset[TRAIN_DATA_POS]) + len(dataset[TEST_DATA_POS])
             self.dump_basename = FILENAME_SEPARATOR.join(
-                [str(self.time), str(self.ngrams_length), str(self.inputs_per_label)] + self.considered_labels
+                [str(self.time), str(self.ngrams_length), str(size)] + self.considered_labels
             )
 
         if suffix != '':
