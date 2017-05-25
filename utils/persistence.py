@@ -2,35 +2,34 @@ import sqlite3
 from utils.constants import DATABASE
 
 
-def insert_protein(pdb_id, sequence, class_label):
+def insert_sequence(key_id, sequence, class_label):
     """
-    Insert protein data into db.
+    Insert sequence data into db.
     
-    :param pdb_id: protein PDB identifier.
-    :param sequence: protein amino acids sequence.
-    :param class_label: protein classification.
+    :param key_id: sequence identifier.
+    :param sequence: the sequence.
+    :param class_label: sequence classification.
     """
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
     try:
-        cursor.execute('''INSERT INTO protein_dupl VALUES (?)''', (pdb_id,))
-        cursor.execute('''INSERT INTO protein VALUES (?,?,?)''', (pdb_id, sequence, class_label))
+        cursor.execute('''INSERT INTO sequence VALUES (?,?,?)''', (key_id, sequence, class_label))
     except sqlite3.IntegrityError as err:
         print(err)
     connection.commit()
     connection.close()
 
 
-def is_known_protein(pdb_id):
+def is_known_sequence(key_id):
     """
-    Tells whether a protein is already in db or not.
+    Tells whether a sequence is already in db or not.
     
-    :param pdb_id: protein PDB identifier.
+    :param key_id: sequence identifier.
     :return: True if already in, False otherwise.
     """
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
-    cursor.execute('''SELECT * FROM protein_dupl WHERE pdb_id = ?''', (pdb_id,))
+    cursor.execute('''SELECT * FROM sequence WHERE key_id = ?''', (key_id,))
     for _ in cursor:
         connection.commit()
         connection.close()
@@ -39,23 +38,23 @@ def is_known_protein(pdb_id):
     return False
 
 
-def get_proteins_unique_labels():
+def get_sequences_unique_labels():
     """
-    Count how many distinct proteins labels are stored in db.
+    Count how many distinct sequences labels are stored in db.
     
     :return: The number of distinct labels.
     """
     result = 0
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
-    cursor.execute('''SELECT COUNT(DISTINCT class_label) FROM protein''')
+    cursor.execute('''SELECT COUNT(DISTINCT class_label) FROM sequence''')
     for row in cursor:
         result = row[0]
     connection.close()
     return result
 
 
-def get_table(table_name='protein', limit=None):
+def get_table(table_name, limit=None):
     """
     Get all records from a given SQL table.
     
@@ -74,7 +73,7 @@ def get_table(table_name='protein', limit=None):
     return table
 
 
-def get_rows_by_label(label_name, table_name='protein', limit=None):
+def get_rows_by_label(label_name, table_name, limit=None):
     """
     Get all records related to a given label from a given SQL table.
     
@@ -94,7 +93,7 @@ def get_rows_by_label(label_name, table_name='protein', limit=None):
     return table
 
 
-def get_training_inputs_by_label(label_name, table_name='protein', limit=None):
+def get_training_inputs_by_label(label_name, table_name, limit=None):
     """
     Get all training inputs related to a given label from a given SQL table.
     
@@ -122,10 +121,8 @@ if __name__ == '__main__':
     c = conn.cursor()
 
     # Create tables
-    c.execute('''CREATE TABLE IF NOT EXISTS protein (pdb_id, sequence, class_label, bases_sequence,
-              PRIMARY KEY(sequence, class_label))''')
-    c.execute('''CREATE TABLE IF NOT EXISTS protein_secondary (pdb_id, sequence, class_label, bases_sequence, chain)''')
-    c.execute('''CREATE TABLE IF NOT EXISTS protein_dupl (pdb_id PRIMARY KEY)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS sequence (key_id, sequence, class_label,
+                 PRIMARY KEY(sequence, class_label))''')
 
     # Save (commit) the changes
     conn.commit()

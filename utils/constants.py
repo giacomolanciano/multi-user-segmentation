@@ -2,6 +2,7 @@
 import os
 
 DATA_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
+DATABASE = os.path.join(DATA_FOLDER, '')  # add .db file in data/ if needed
 LOG_EXT = '.tsv'
 LOG_ENTRY_DELIMITER = '\t'
 SENSOR_ID_POS = 2
