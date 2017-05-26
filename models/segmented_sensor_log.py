@@ -55,6 +55,9 @@ class SegmentedSensorLog(object):
             raise ValueError('Not enough inputs provided.')
 
     def plot_stats(self, distribution=True, time_series=True):
+        if not (distribution or time_series):
+            raise ValueError('At least a chart should be plotted.')
+
         segments_num = len(self.segments)
         segments_lengths = [len(s) for s in self.segments]
 
@@ -71,8 +74,7 @@ class SegmentedSensorLog(object):
             plt.figure()
             sn.tsplot(segments_lengths)
 
-        if distribution or time_series:
-            plt.show()
+        plt.show()
 
 
 if __name__ == '__main__':
@@ -86,7 +88,7 @@ if __name__ == '__main__':
     #
     # ssl = SegmentedSensorLog(segments=segs.keys())
 
-    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered_simplified.txt')
+    SRC = os.path.join(DATA_FOLDER, 'complete_dataset_preprocessed_filtered_simplified.txt')
     THRESHOLD = 0.1
 
     with open(SRC, 'rb') as log:
@@ -105,6 +107,5 @@ if __name__ == '__main__':
                 sequence += c[0]
             sequences.append(sequence)
             labels.append(GOOD)
-
     clf_input = SequenceClassifierInput(sequences=sequences, labels=labels)
     clf_input.get_spectrum_train_test_data()
