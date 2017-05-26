@@ -107,5 +107,6 @@ if __name__ == '__main__':
                 sequence += c[0]
             sequences.append(sequence)
             labels.append(GOOD)
+
     clf_input = SequenceClassifierInput(sequences=sequences, labels=labels)
     clf_input.get_spectrum_train_test_data()
