@@ -178,3 +178,4 @@ fabric.properties
 data/**/*.csv
 data/**/*.txt
 data/**/*.pkl
+data/**/*.mmap
