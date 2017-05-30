@@ -1,11 +1,9 @@
-import os
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sn
 import unicodecsv as csv
 
-from utils.constants import DATA_FOLDER, LOG_ENTRY_DELIMITER, SENSOR_ID_POS
+from utils.constants import LOG_ENTRY_DELIMITER, SENSOR_ID_POS
 
 
 class TopologicalCompatMatrix(object):
@@ -120,10 +118,3 @@ class TopologicalCompatMatrix(object):
         plt.xticks(rotation=self.X_LABELS_ROT)
         fig.tight_layout()
         plt.show()
-
-
-if __name__ == '__main__':
-    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered.tsv')
-    with open(SRC, 'rb') as log:
-        tcm = TopologicalCompatMatrix(log)
-    tcm.plot(show_values=False)

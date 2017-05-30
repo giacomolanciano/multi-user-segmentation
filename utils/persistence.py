@@ -1,4 +1,5 @@
 import sqlite3
+
 from utils.constants import DATABASE
 
 
@@ -11,9 +12,15 @@ def insert_sequence(key_id, sequence, class_label):
     :param class_label: sequence classification.
     """
     connection = sqlite3.connect(DATABASE)
-    cursor = connection.cursor()
+    c1 = connection.cursor()
+    c2 = connection.cursor()
+
+    # Create tables if not exist
+    c1.execute('''CREATE TABLE IF NOT EXISTS sequence (key_id, sequence, class_label,
+                     PRIMARY KEY(sequence, class_label))''')
+
     try:
-        cursor.execute('''INSERT INTO sequence VALUES (?,?,?)''', (key_id, sequence, class_label))
+        c2.execute('''INSERT INTO sequence VALUES (?,?,?)''', (key_id, sequence, class_label))
     except sqlite3.IntegrityError as err:
         print(err)
     connection.commit()
@@ -114,16 +121,3 @@ def get_training_inputs_by_label(label_name, table_name, limit=None):
     table = cursor.fetchall()
     connection.close()
     return table
-
-
-if __name__ == '__main__':
-    conn = sqlite3.connect(DATABASE)
-    c = conn.cursor()
-
-    # Create tables
-    c.execute('''CREATE TABLE IF NOT EXISTS sequence (key_id, sequence, class_label,
-                 PRIMARY KEY(sequence, class_label))''')
-
-    # Save (commit) the changes
-    conn.commit()
-    conn.close()

@@ -15,7 +15,7 @@ clf = svm.OneClassSVM(kernel='precomputed')
 
 # build training and test splits
 print('Loading dataset...')
-clf_input = SequenceClassifierInput(cached_dataset='1495739448_3_704_GOOD')
+clf_input = SequenceClassifierInput(cached_dataset='1495816096_3_52483_GOOD')
 train_data, test_data, train_labels, test_labels = clf_input.get_spectrum_train_test_data()
 train_labels = np.asarray(train_labels)
 test_labels = np.asarray(test_labels)

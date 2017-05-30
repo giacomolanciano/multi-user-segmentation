@@ -5,6 +5,9 @@ import numpy as np
 import sys
 from sklearn.model_selection import train_test_split
 
+import klepto
+import time
+
 from sequence_classification import tf_glove
 from utils import persistence
 from utils.constants import \
@@ -12,9 +15,6 @@ from utils.constants import \
     FILENAME_SEPARATOR, DATA_FOLDER, TRAIN_DATA_KEY, TEST_DATA_KEY, TRAIN_LABELS_KEY, TEST_LABELS_KEY, \
     TRAIN_DATA_POS, TEST_DATA_POS, TRAIN_LABELS_POS, TEST_LABELS_POS, GLOVE_TRAIN_SUFFIX, GLOVE_TEST_SUFFIX, \
     GLOVE_EMBEDDING_SIZE_KEY, MAX_COLS_NUM_KEY
-
-import klepto
-import time
 
 BASE_TWO = 2
 SYMBOLS_DICT = {
