@@ -84,9 +84,9 @@ class SegmentedSensorLog(object):
                 segment.append(list(s1))  # continue the segment
             else:
                 # the direct succession value is under the threshold
-                if len(segment) > 1:  # only segments longer than 1 are considered patterns
+                if len(segment) > 1:                     # only segments longer than 1 are considered as patterns
                     self.segments.append(list(segment))  # store a copy of the segment so far
-                segment = [list(s1)]  # start the new segment from the second item in the window
+                segment = [list(s1)]                     # start the new segment from the second item in the window
 
             # prepare next step (slide the window by one position)
             s0 = s1
