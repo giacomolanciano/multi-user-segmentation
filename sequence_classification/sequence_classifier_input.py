@@ -284,6 +284,8 @@ class SequenceClassifierInput(object):
         """
         labels_dict = {}
         num_labels = len(self.considered_labels)
+        if num_labels == 1:
+            num_labels = 2  # to turn the problem in a single-class classification
         for i, label in enumerate(self.considered_labels):
             label_vector = [0] * num_labels
             label_vector[i] = 1
