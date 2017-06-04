@@ -1,3 +1,5 @@
+""" Based on http://danijar.com/variable-sequence-lengths-in-tensorflow/ """
+
 import functools
 
 import tensorflow as tf

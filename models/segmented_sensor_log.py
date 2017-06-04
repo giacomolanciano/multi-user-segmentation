@@ -19,7 +19,7 @@ class SegmentedSensorLog(object):
         :param top_compat_matrix: the topological compatibility matrix of the sensor log.
         :param threshold: the threshold to reach for a direct succession to be significant.
         :param segments: a precomputed list of segments. 
-        :param sensor_id_pos: the position of the sensor id in the log entry. 
+        :param sensor_id_pos: the position of the sensor id in the log entry.
         """
         if segments:
             self.segments = segments
@@ -29,29 +29,19 @@ class SegmentedSensorLog(object):
             self.sensor_log = csv.reader(sensor_log, delimiter=LOG_ENTRY_DELIMITER)
             self.top_compat_matrix = top_compat_matrix
 
-            s0 = next(self.sensor_log, None)  # consider a sliding window of two events per step
-            s1 = next(self.sensor_log, None)
-            segment = [list(s0)]
-            while s0 is not None and s1 is not None:
-                s0_id = s0[sensor_id_pos]
-                s1_id = s1[sensor_id_pos]
-
-                if self.top_compat_matrix.prob_matrix[s0_id][s1_id] >= threshold:
-                    # the direct succession value is above the threshold
-                    segment.append(list(s1))  # continue the segment
-                elif segment:
-                    # the direct succession value is under the threshold (and the current segment is non-empty)
-                    self.segments.append(list(segment))  # store a copy of the segment so far
-                    segment = [list(s1)]                 # start the new segment from the second item in the window
-
-                # prepare next step (slide the window by one position)
-                s0 = s1
-                s1 = next(self.sensor_log, None)
+            self._find_segments(threshold, sensor_id_pos)
 
         else:
             raise ValueError('Not enough inputs provided.')
 
     def plot_stats(self, distribution=True, time_series=True):
+        """
+        Visualize segmented sensor log statistics.
+        Notice that time-series visualization is significant only when the segments are chronologically ordered.
+        
+        :param distribution: whether the distribution visualization must be shown.
+        :param time_series: whether the time-series visualization must be shown.
+        """
         if not (distribution or time_series):
             raise ValueError('At least a chart should be plotted.')
 
@@ -72,3 +62,31 @@ class SegmentedSensorLog(object):
             sn.tsplot(segments_lengths)
 
         plt.show()
+
+    """ UTILITY FUNCTIONS """
+
+    def _find_segments(self, threshold, sensor_id_pos):
+        """
+        Find segments in the given sensor log.
+        
+        :param threshold: the threshold to reach for a direct succession to be significant.
+        :param sensor_id_pos: the position of the sensor id in the log entry.
+        """
+        s0 = next(self.sensor_log, None)  # consider a sliding window of two events per step
+        s1 = next(self.sensor_log, None)
+        segment = [list(s0)]
+        while s0 is not None and s1 is not None:
+            s0_id = s0[sensor_id_pos]
+            s1_id = s1[sensor_id_pos]
+
+            if self.top_compat_matrix.prob_matrix[s0_id][s1_id] >= threshold:
+                # the direct succession value is above the threshold
+                segment.append(list(s1))  # continue the segment
+            elif segment:
+                # the direct succession value is under the threshold (and the current segment is non-empty)
+                self.segments.append(list(segment))  # store a copy of the segment so far
+                segment = [list(s1)]  # start the new segment from the second item in the window
+
+            # prepare next step (slide the window by one position)
+            s0 = s1
+            s1 = next(self.sensor_log, None)
