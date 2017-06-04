@@ -17,14 +17,17 @@ if __name__ == '__main__':
     #
     # ssl = SegmentedSensorLog(segments=segs.keys())
 
-    SRC = os.path.join(DATA_FOLDER, 'complete_dataset_preprocessed_filtered_simplified.txt')
+    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered.tsv')
     THRESHOLD = 0.1
+    SENSOR_ID_POS_ = 2
 
     with open(SRC, 'rb') as log:
-        tcm = TopologicalCompatMatrix(log, sensor_id_pos=0)
+        tcm = TopologicalCompatMatrix(log, sensor_id_pos=SENSOR_ID_POS_)
 
     with open(SRC, 'rb') as log:
-        ssl = SegmentedSensorLog(log, tcm, THRESHOLD, sensor_id_pos=0)
+        ssl = SegmentedSensorLog(log, tcm, THRESHOLD, sensor_id_pos=SENSOR_ID_POS_)
+
+    ssl.plot_stats()
 
     # GOOD = 'GOOD'
     # sequences = []

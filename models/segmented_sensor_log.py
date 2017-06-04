@@ -82,9 +82,10 @@ class SegmentedSensorLog(object):
             if self.top_compat_matrix.prob_matrix[s0_id][s1_id] >= threshold:
                 # the direct succession value is above the threshold
                 segment.append(list(s1))  # continue the segment
-            elif segment:
-                # the direct succession value is under the threshold (and the current segment is non-empty)
-                self.segments.append(list(segment))  # store a copy of the segment so far
+            else:
+                # the direct succession value is under the threshold
+                if len(segment) > 1:  # only segments longer than 1 are considered patterns
+                    self.segments.append(list(segment))  # store a copy of the segment so far
                 segment = [list(s1)]  # start the new segment from the second item in the window
 
             # prepare next step (slide the window by one position)
