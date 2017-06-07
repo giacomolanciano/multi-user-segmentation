@@ -19,11 +19,9 @@ class TopologicalCompatMatrix(object):
         :param sensor_log: the tab-separated file containing the sensor log.
         :param sensor_id_pos: the position of the sensor id in the log entry.
         """
-        self.sensor_log = csv.reader(sensor_log, delimiter=LOG_ENTRY_DELIMITER)
         self.prob_matrix = {}
         self.sensors_occurrences = {}
-
-        self._build_tcm(sensor_id_pos)
+        self._build_tcm(sensor_log, sensor_id_pos)
 
     def plot(self, threshold=None, show_values=False):
         """
@@ -57,14 +55,18 @@ class TopologicalCompatMatrix(object):
 
     """ UTILITY FUNCTIONS """
 
-    def _build_tcm(self, sensor_id_pos):
+    def _build_tcm(self, sensor_log, sensor_id_pos):
         """
         Build the topological compatibility matrix associated with the given sensor log.
         
+        :type sensor_log: file
+        :param sensor_log: the tab-separated file containing the sensor log.
         :param sensor_id_pos: the position of the sensor id in the log entry.
         """
-        s0 = next(self.sensor_log, None)  # consider a sliding window of two events per step
-        s1 = next(self.sensor_log, None)
+        sensor_log_reader = csv.reader(sensor_log, delimiter=LOG_ENTRY_DELIMITER)
+
+        s0 = next(sensor_log_reader, None)  # consider a sliding window of two events per step
+        s1 = next(sensor_log_reader, None)
         self.sensors_occurrences[s0[sensor_id_pos]] = 1
         while s0 is not None and s1 is not None:
             s0_id = s0[sensor_id_pos]
@@ -83,7 +85,7 @@ class TopologicalCompatMatrix(object):
 
             # prepare next step (slide the window by one position)
             s0 = s1
-            s1 = next(self.sensor_log, None)
+            s1 = next(sensor_log_reader, None)
 
         for s_row in self.prob_matrix:
             for s_col in self.prob_matrix[s_row]:

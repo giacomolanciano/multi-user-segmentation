@@ -17,9 +17,9 @@ if __name__ == '__main__':
     #
     # ssl = SegmentedSensorLog(segments=segs.keys())
 
-    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered.tsv')
+    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered_simplified.txt')
     THRESHOLD = 0.1
-    SENSOR_ID_POS_ = 2
+    SENSOR_ID_POS_ = 0
 
     with open(SRC, 'rb') as log:
         tcm = TopologicalCompatMatrix(log, sensor_id_pos=SENSOR_ID_POS_)
