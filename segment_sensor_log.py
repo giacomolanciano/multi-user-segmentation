@@ -6,39 +6,39 @@ from sequence_classification.sequence_classifier_input import SequenceClassifier
 from utils.constants import DATA_FOLDER
 
 
+def _build_sequence_clf_training_set():
+    GOOD = 'GOOD'
+    sequences = []
+    labels = []
+    for segment_ in ssl.segments:
+        sequence = ''
+        for c in segment_:
+            sequence += c[0]
+        sequences.append(sequence)
+        labels.append(GOOD)
+    clf_input = SequenceClassifierInput(sequences=sequences, labels=labels)
+    clf_input.get_spectrum_train_test_data()
+
+
 if __name__ == '__main__':
-    # import pickle
-    # from pprint import pprint
-
-    # SRC = os.path.join(DATA_FOLDER, 'sequences.pkl')
-    #
-    # with open(SRC, 'rb') as src:
-    #     segs = dict(pickle.load(src))
-    #
-    # ssl = SegmentedSensorLog(segments=segs.keys())
-
     SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered_simplified.txt')
-    THRESHOLD = 0.1
+    COMPAT_THRESHOLD_ = 0.1
+    NOISE_THRESHOLD_ = 2
     SENSOR_ID_POS_ = 0
 
     with open(SRC, 'rb') as log:
-        tcm = TopologicalCompatMatrix(log, sensor_id_pos=SENSOR_ID_POS_)
+        tcm = TopologicalCompatMatrix(sensor_log=log, sensor_id_pos=SENSOR_ID_POS_)
 
     with open(SRC, 'rb') as log:
-        ssl = SegmentedSensorLog(log, tcm, THRESHOLD, sensor_id_pos=SENSOR_ID_POS_)
+        ssl = SegmentedSensorLog(sensor_log=log, top_compat_matrix=tcm, sensor_id_pos=SENSOR_ID_POS_,
+                                 compat_threshold=COMPAT_THRESHOLD_, noise_threshold=NOISE_THRESHOLD_)
 
+    # show the segments
+    # from pprint import pprint
+    # pprint(ssl.segments)
+
+    # build a training set for a sequence classifier
+    # _build_sequence_clf_training_set()
+
+    # show segmented log statistics
     ssl.plot_stats()
-
-    # GOOD = 'GOOD'
-    # sequences = []
-    # labels = []
-    # for segment_ in ssl.segments:
-    #     if len(segment_) > 1:
-    #         sequence = ''
-    #         for c in segment_:
-    #             sequence += c[0]
-    #         sequences.append(sequence)
-    #         labels.append(GOOD)
-    #
-    # clf_input = SequenceClassifierInput(sequences=sequences, labels=labels)
-    # clf_input.get_spectrum_train_test_data()
