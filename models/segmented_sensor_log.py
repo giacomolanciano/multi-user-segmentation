@@ -3,12 +3,12 @@ import seaborn as sn
 import unicodecsv as csv
 
 from models.topological_compat_matrix import TopologicalCompatMatrix
-from utils.constants import LOG_ENTRY_DELIMITER, SENSOR_ID_POS
+from utils.constants import LOG_ENTRY_DELIMITER, SENSOR_ID_POS, NOISE_THRESHOLD
 
 
 class SegmentedSensorLog(object):
     def __init__(self, sensor_log=None, top_compat_matrix=None, compat_threshold=None, segments=None,
-                 sensor_id_pos=SENSOR_ID_POS, noise_threshold=2):
+                 sensor_id_pos=SENSOR_ID_POS, noise_threshold=NOISE_THRESHOLD):
         """
         Build segmented version of the given log considering the given probabilistic topological compatibility matrix.
         
@@ -67,7 +67,64 @@ class SegmentedSensorLog(object):
 
     """ UTILITY FUNCTIONS """
 
-    def _find_segments(self, sensor_log, threshold, sensor_id_pos, noise_threshold):
+    def _find_segments(self, sensor_log, compat_threshold, sensor_id_pos, noise_threshold):
+        """
+        Find segments in the given sensor log.
+
+        :type sensor_log: file
+        :type compat_threshold: float
+        :type sensor_id_pos: int
+        :type noise_threshold: int
+        :param sensor_log: the tab-separated file containing the sensor log.
+        :param compat_threshold: the threshold to reach for a direct succession to be significant.
+        :param sensor_id_pos: the position of the sensor id in the log entry.
+        :param noise_threshold: the minimum length of a segment.
+        """
+        sensor_log_reader = csv.reader(sensor_log, delimiter=LOG_ENTRY_DELIMITER)
+
+        open_segments = []
+        for measure in sensor_log_reader:
+            sensor_id = measure[sensor_id_pos]
+
+            # find compatible open segments
+            compat_segments_idxs = []
+            for idx, os in enumerate(open_segments):
+                # consider the sensor id of the last measure in segment
+                old_sensor_id = os[-1][sensor_id_pos]
+
+                if self.top_compat_matrix.prob_matrix[old_sensor_id][sensor_id] >= compat_threshold:
+                    # the direct succession value is above the threshold -> segment is compatible
+                    compat_segments_idxs.append(idx)
+
+            # check compatibility results
+            if len(compat_segments_idxs) == 1:
+                # only one compat segment exists, append the measure
+                segment_idx = compat_segments_idxs[0]
+                open_segments[segment_idx].append(measure)
+
+            else:
+                if len(compat_segments_idxs) > 1:
+                    # if many compat segments exist, close them (B-step)
+                    for idx in reversed(compat_segments_idxs):
+                        closed_segment = open_segments.pop(idx)
+                        if len(closed_segment) >= noise_threshold:  # noise filtering
+                            self.segments.append(closed_segment)
+
+                # open new segment and append the measure
+                new_segment = [measure]
+                open_segments.append(new_segment)
+
+        # close remaining open segments
+        while open_segments:
+            closed_segment = open_segments.pop()
+            if len(closed_segment) >= noise_threshold:  # noise filtering
+                self.segments.append(closed_segment)
+
+    def close_open_segments(self):
+        #TODO
+        pass
+
+    def _find_segments_old(self, sensor_log, threshold, sensor_id_pos, noise_threshold):
         """
         Find segments in the given sensor log.
 

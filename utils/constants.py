@@ -8,6 +8,7 @@ LOG_ENTRY_DELIMITER = '\t'
 SENSOR_ID_POS = 2
 SENSOR_STATE_POS = 3
 SENSOR_STATE_ON = 'ON'
+NOISE_THRESHOLD = 2
 
 TRAINED_MODELS_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'trained_classifiers')
 TF_MODEL_EXT = '.ckpt'
