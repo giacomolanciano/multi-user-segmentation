@@ -13,7 +13,8 @@ class TopologicalCompatMatrix(object):
 
     def __init__(self, sensor_log, sensor_id_pos=SENSOR_ID_POS):
         """
-        Build the topological compatibility matrix associated with the given sensor log.
+        Topological compatibility matrix associated with the given sensor log. An entry of this matrix states the
+        probability that the sensor on the row is followed by the sensor on the column in the log.
         
         :type sensor_log: file
         :param sensor_log: the tab-separated file containing the sensor log.

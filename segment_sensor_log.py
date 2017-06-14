@@ -21,10 +21,15 @@ def _build_sequence_clf_training_set():
 
 
 if __name__ == '__main__':
-    SRC = os.path.join(DATA_FOLDER, 'dataset_attivita_non_innestate_filtered_simplified.txt')
+    import time
+    from datetime import timedelta
+
+    SRC = os.path.join(DATA_FOLDER, 'complete_dataset_preprocessed_filtered_simplified.txt')
     COMPAT_THRESHOLD_ = 0.1
-    NOISE_THRESHOLD_ = 2
+    NOISE_THRESHOLD_ = 20
     SENSOR_ID_POS_ = 0
+
+    start_time = time.time()
 
     with open(SRC, 'rb') as log:
         tcm = TopologicalCompatMatrix(sensor_log=log, sensor_id_pos=SENSOR_ID_POS_)
@@ -33,9 +38,18 @@ if __name__ == '__main__':
         ssl = SegmentedSensorLog(sensor_log=log, top_compat_matrix=tcm, sensor_id_pos=SENSOR_ID_POS_,
                                  compat_threshold=COMPAT_THRESHOLD_, noise_threshold=NOISE_THRESHOLD_)
 
-    # show the segments
+    elapsed_time = (time.time() - start_time)
+    print('Segmentation time:', timedelta(seconds=elapsed_time))
+
+    # show segments
     # from pprint import pprint
     # pprint(ssl.segments)
+
+    # show b-steps
+    # for b in ssl.b_steps:
+    #     pprint(b.segments)
+    #     pprint(b.compat_segments)
+    #     print()
 
     # build a training set for a sequence classifier
     # _build_sequence_clf_training_set()
