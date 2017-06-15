@@ -6,11 +6,11 @@ from sequence_classification.sequence_classifier_input import SequenceClassifier
 from utils.constants import DATA_FOLDER
 
 
-def _build_sequence_clf_training_set():
+def _build_sequence_clf_training_set(segmented_log):
     GOOD = 'GOOD'
     sequences = []
     labels = []
-    for segment_ in ssl.segments:
+    for segment_ in segmented_log.segments:
         sequence = ''
         for c in segment_:
             sequence += c[0]
@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     SRC = os.path.join(DATA_FOLDER, 'complete_dataset_preprocessed_filtered_simplified.txt')
     COMPAT_THRESHOLD_ = 0.1
-    NOISE_THRESHOLD_ = 20
+    NOISE_THRESHOLD_ = 2
     SENSOR_ID_POS_ = 0
 
     start_time = time.time()
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     #     print()
 
     # build a training set for a sequence classifier
-    # _build_sequence_clf_training_set()
+    # _build_sequence_clf_training_set(ssl)
 
     # show segmented log statistics
     ssl.plot_stats()

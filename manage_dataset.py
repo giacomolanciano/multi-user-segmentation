@@ -37,6 +37,7 @@ def load_dataset(cached_dataset):
 if __name__ == '__main__':
     from pprint import pprint
 
-    d = load_dataset(cached_dataset='...')
+    d = load_dataset(cached_dataset='1497531897_3_22832_GOOD_spectrum')
+    pprint(d['train_data'][:10])
 
     # insert the code for the desired manipulation of a cached dataset.
