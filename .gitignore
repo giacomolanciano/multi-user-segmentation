@@ -179,3 +179,4 @@ data/**/*.csv
 data/**/*.txt
 data/**/*.pkl
 data/**/*.mmap
+trained_classifiers/**/*.pkl
