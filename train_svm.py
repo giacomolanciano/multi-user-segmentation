@@ -21,6 +21,8 @@ def filter_dataset(dataset, threshold, ngrams_length):
 
 if __name__ == '__main__':
 
+    NOISE_THRESHOLD = 10
+
     print('Loading dataset...')
     clf_input = SequenceClassifierInput(cached_dataset='1497531897_3_22832_GOOD')
     train_data, test_data, *_ = clf_input.get_spectrum_train_test_data()           # ignoring labels
@@ -30,8 +32,8 @@ if __name__ == '__main__':
     train_data = train_data + test_data
 
     # Filter out short sequences from dataset.
-    filter_dataset(train_data, 10, clf_input.ngrams_length)
-    print(len(train_data))
+    print('Filtering dataset...')
+    filter_dataset(train_data, NOISE_THRESHOLD, clf_input.ngrams_length)
 
     print('Training One-class SVM...')
     clf = svm.OneClassSVM(kernel=occurrence_dict_spectrum_kernel)

@@ -9,7 +9,7 @@ GOOD_LABEL = 'GOOD'
 
 
 def _build_sequence_clf_training_set(segmented_log, sensor_id_pos, ngrams_length):
-    print('Building test set...')
+    print('Building training set...')
     sequences = []
     labels = []
     for segment_ in segmented_log.segments:
