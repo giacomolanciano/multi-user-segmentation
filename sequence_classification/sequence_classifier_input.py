@@ -60,11 +60,10 @@ class SequenceClassifierInput(object):
                  table_name: str = None,
                  inputs_per_label: int = 1000,
                  cached_dataset: str = None,
-                 ngrams_length: int = 3,
+                 ngrams_length: int = 2,
                  test_size: float = 0.25,
                  random_state: int = 42,
-                 progress: bool = True
-                 ):
+                 progress: bool = True):
         """
         A class representing the input data to be fed to a sequence classifier.
         
