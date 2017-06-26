@@ -24,8 +24,8 @@ if __name__ == '__main__':
     NOISE_THRESHOLD = 10
 
     print('Loading dataset...')
-    clf_input = SequenceClassifierInput(cached_dataset='1497531897_3_22832_GOOD')
-    train_data, test_data, *_ = clf_input.get_spectrum_train_test_data()           # ignoring labels
+    clf_input = SequenceClassifierInput(cached_dataset='1498483802_3_17732_GOOD_training')
+    train_data, test_data, *_ = clf_input.get_spectrum_train_test_data()  # ignoring labels
 
     # SequenceClassifierInput splits the dataset in train and test by default.
     # Since the validation is performed separately, we join the splits.
