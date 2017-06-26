@@ -8,7 +8,7 @@ from utils.constants import DATA_FOLDER
 GOOD_LABEL = 'GOOD'
 
 
-def _build_sequence_clf_training_set(segmented_log, sensor_id_pos, ngrams_length):
+def build_sequence_clf_training_set(segmented_log, sensor_id_pos, ngrams_length):
     print('Building training set...')
     sequences = []
     labels = []
@@ -19,10 +19,11 @@ def _build_sequence_clf_training_set(segmented_log, sensor_id_pos, ngrams_length
         sequences.append(sequence)
         labels.append(GOOD_LABEL)
     clf_input = SequenceClassifierInput(sequences=sequences, labels=labels, ngrams_length=ngrams_length)
-    clf_input.get_spectrum_train_test_data()
+    train_data, *_ = clf_input.get_spectrum_train_test_data()
+    return len(train_data[0])  # return the max sequence length
 
 
-def _build_sequence_clf_validation_set(segmented_log, sensor_id_pos, ngrams_length):
+def build_sequence_clf_validation_set(segmented_log, sensor_id_pos, ngrams_length, max_vector_length):
     print('Building validation set...')
     sequences = []
     labels = []
@@ -36,7 +37,7 @@ def _build_sequence_clf_validation_set(segmented_log, sensor_id_pos, ngrams_leng
                 sequences.append(sequence)
                 labels.append(GOOD_LABEL)
     clf_input = SequenceClassifierInput(sequences=sequences, labels=labels, ngrams_length=ngrams_length)
-    clf_input.get_spectrum_train_test_data()
+    clf_input.get_spectrum_train_test_data(max_vector_length)
 
 
 if __name__ == '__main__':
@@ -77,10 +78,10 @@ if __name__ == '__main__':
     #     print()
 
     # build a training set for a sequence classifier
-    # _build_sequence_clf_training_set(ssl, SENSOR_ID_POS_, NGRAMS_LENGTH)
+    # max_vector_length_ = build_sequence_clf_training_set(ssl, SENSOR_ID_POS_, NGRAMS_LENGTH)
 
     # build a validation set for a sequence classifier
-    # _build_sequence_clf_validation_set(ssl, SENSOR_ID_POS_, NGRAMS_LENGTH)
+    # build_sequence_clf_validation_set(ssl, SENSOR_ID_POS_, NGRAMS_LENGTH, max_vector_length_)
 
     # show segmented log statistics
     ssl.plot_stats()

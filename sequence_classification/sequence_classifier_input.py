@@ -172,7 +172,7 @@ class SequenceClassifierInput(object):
                            glove_embedding_size=EMBEDDING_SIZE, max_cols_num=max_cols_num)
         return split_dataset
 
-    def get_spectrum_train_test_data(self):
+    def get_spectrum_train_test_data(self, max_vector_length=None):
         """
         Create training and test splits (data and corresponding labels) for Spectrum Kernel.
         
@@ -201,7 +201,7 @@ class SequenceClassifierInput(object):
             train_data, test_data, train_labels, test_labels = self._get_training_inputs_by_labels()
 
         train_size = len(train_data)
-        data = self._preprocess_data(train_data + test_data, encode=True, pad=True)
+        data = self._preprocess_data(train_data + test_data, encode=True, pad=True, max_vector_length=max_vector_length)
         train_labels = self._labels_to_integers(train_labels)
         test_labels = self._labels_to_integers(test_labels)
 
@@ -233,7 +233,7 @@ class SequenceClassifierInput(object):
         self._dump_dataset(split_dataset)
         return split_dataset
 
-    def _preprocess_data(self, data, encode=False, pad=False):
+    def _preprocess_data(self, data, encode=False, pad=False, max_vector_length=None):
         """
         Preprocess the data to be fed to a sequence classifier.
         
@@ -257,7 +257,7 @@ class SequenceClassifierInput(object):
 
         if pad:
             # pad shingles lists looking at the maximum length
-            data = self._pad_shingles_lists(data)
+            data = self._pad_shingles_lists(data, max_vector_length)
 
         return data
 
@@ -438,11 +438,15 @@ class SequenceClassifierInput(object):
         return int(binary_string, BASE_TWO)
 
     @staticmethod
-    def _pad_shingles_lists(data):
-        max_length = len(max(data, key=len))
+    def _pad_shingles_lists(data, max_vector_length=None):
+        if not max_vector_length:
+            max_vector_length = len(max(data, key=len))
 
-        # pad inputs with respect to max length
+        # pad inputs with respect to max length (truncate if necessary)
         for shingle_list in data:
-            padding_length = max_length - len(shingle_list)
-            shingle_list += [PADDING_VALUE] * padding_length
+            padding_length = max_vector_length - len(shingle_list)
+            if padding_length >= 0:
+                shingle_list += [PADDING_VALUE] * padding_length
+            else:
+                shingle_list[:] = shingle_list[:padding_length or None]  # remove exceeding items
         return data
