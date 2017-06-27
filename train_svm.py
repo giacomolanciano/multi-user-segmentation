@@ -54,9 +54,11 @@ if __name__ == '__main__':
     start_time = time.time()
     clf.fit(train_data)
     elapsed_time = (time.time() - start_time)
-    print('\tTime: ', timedelta(seconds=elapsed_time))
+    print('\tTime:', timedelta(seconds=elapsed_time))
+    print('\tNoise threshold:', NOISE_THRESHOLD)
 
     print('Creating model dump...')
     model_checkpoint_time = str(int(time.time()))
     model_checkpoint_filename = os.path.join(TRAINED_MODELS_FOLDER, model_checkpoint_time + PICKLE_EXT)
     joblib.dump(clf, model_checkpoint_filename)
+    print(model_checkpoint_filename)
