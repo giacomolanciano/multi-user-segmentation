@@ -172,6 +172,8 @@ class SegmentedSensorLog(object):
         if b_step.segments:
             self.b_steps.append(b_step)
 
+    """ DEPRECATED FUNCTIONS """
+
     def _find_segments_old(self, sensor_log):
         """
         Find segments in the given sensor log (old version).

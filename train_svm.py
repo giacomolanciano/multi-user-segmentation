@@ -10,9 +10,9 @@ from sequence_classification.sequence_classifier_input import SequenceClassifier
 from utils.constants import TRAINED_MODELS_FOLDER, PICKLE_EXT
 
 
-def get_real_sequence_length(sequence, ngrams_length):
+def get_actual_sequence_length(sequence, ngrams_length):
     """
-    Compute the length of a sequence given its n-grams representation (and n-grams length).
+    Compute the length of a sequence given its n-grams representation and n-grams length.
 
     :param sequence: the n-grams representation of the sequence.
     :param ngrams_length: the length of each n-gram.
@@ -30,7 +30,7 @@ def filter_dataset(dataset, threshold, ngrams_length):
     :param threshold: the minimum length to be matched.
     :param ngrams_length: the length of each n-gram.
     """
-    dataset[:] = [sequence for sequence in dataset if get_real_sequence_length(sequence, ngrams_length) >= threshold]
+    dataset[:] = [sequence for sequence in dataset if get_actual_sequence_length(sequence, ngrams_length) >= threshold]
 
 
 if __name__ == '__main__':
