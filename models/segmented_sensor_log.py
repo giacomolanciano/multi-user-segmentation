@@ -9,7 +9,7 @@ from utils.constants import LOG_ENTRY_DELIMITER, SENSOR_ID_POS, NOISE_THRESHOLD
 class BStep(object):
     def __init__(self):
         """
-        Gather the two sets of segments that must be combined in the validation phase.
+        Gather the two sets of segments that must be combined to contribute to the validation set.
         """
         self.segments = []         # the segments closed at this B-step.
         self.compat_segments = []  # the segments opened after this B-step that are compatible.

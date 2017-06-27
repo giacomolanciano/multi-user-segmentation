@@ -29,5 +29,5 @@ if __name__ == '__main__':
     # compute predictions and show stats
     predictions = clf.predict(validation_data)
     total_sequences_num = len(validation_data)
-    good_sequences_num = sum(1 for _ in filter(lambda x: x == 1, predictions))
+    good_sequences_num = sum(1 for _ in filter(lambda x: x == 1, predictions))  # count positive predictions
     print('Fraction of good sequences: {:3.1f}%'.format(good_sequences_num / total_sequences_num))

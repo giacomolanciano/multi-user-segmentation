@@ -37,6 +37,8 @@ def precomputed_occurrence_dict_spectrum_kernel(data):
     performances). This specialized version of the algorithm assumes that the same dataset is used for both the rows and
     the columns of the matrix. Therefore, the resulting kernel matrix is symmetric and performances can be further
     improved (by computing only an "half" of it).
+    Notice that if a model has to be use for getting predictions, then this version of the kernel function cannot be
+    employed.
     
     :param data: the list of data corresponding to both the rows and the columns of the kernel matrix.
     :return: a list of list representing the kernel matrix.
