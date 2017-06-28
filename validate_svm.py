@@ -27,14 +27,17 @@ if __name__ == '__main__':
     # Filter out short sequences from dataset.
     print('Filtering dataset...')
     filter_dataset(validation_data, NOISE_THRESHOLD, clf_input.ngrams_length)
+    print('\tFiltered dataset size:', str(len(validation_data)))
 
     # compute predictions and show stats
+    print('Computing predictions...')
     predictions = clf.predict(validation_data)
     total_sequences_num = len(validation_data)
     good_sequences_num = sum(1 for _ in filter(lambda x: x == 1, predictions))  # count positive predictions
-    print('Fraction of good sequences: {:3.1f}%'.format(good_sequences_num / total_sequences_num))
+    print('\tFraction of good sequences: {:3.1f}%'.format(good_sequences_num / total_sequences_num))
 
     # dump results
+    print('Dumping predictions...')
     predictions_info = [str(int(time.time())), 'l_min', NOISE_THRESHOLD, 'predictions']
     predictions_filename = os.path.join(DATA_FOLDER, FILENAME_SEPARATOR.join(predictions_info) + PICKLE_EXT)
     pickle.dump(predictions, predictions_filename)
