@@ -119,7 +119,7 @@ class SegmentedSensorLog(object):
 
                 # check whether the new segment is compatible with at least a segment in last B-step
                 if self.b_steps:
-                    if len(self._get_compat_segments_indices(self.b_steps[-1].segments, sensor_id)) > 0:
+                    if self._get_compat_segments_indices(self.b_steps[-1].segments, sensor_id):
                         # add new segment to last B-step compatibility list
                         self.b_steps[-1].add_compat_segment(new_segment)
 

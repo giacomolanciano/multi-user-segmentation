@@ -13,10 +13,10 @@ from utils.constants import TRAINED_MODELS_FOLDER, PICKLE_EXT, DATA_FOLDER, FILE
 
 if __name__ == '__main__':
 
-    NOISE_THRESHOLD = 10
+    NOISE_THRESHOLD = 15
 
     print('Loading model dump...')
-    predictions_filename = os.path.join(TRAINED_MODELS_FOLDER, 'l_min_10.pkl')
+    predictions_filename = os.path.join(TRAINED_MODELS_FOLDER, 'l_min_15.pkl')
     clf = joblib.load(predictions_filename)
 
     print('Loading validation data...')
