@@ -3,6 +3,8 @@ import os
 import time
 
 import pickle
+from datetime import timedelta
+
 from sklearn.externals import joblib
 
 from sequence_classification.sequence_classifier_input import SequenceClassifierInput
@@ -17,6 +19,7 @@ if __name__ == '__main__':
     predictions_filename = os.path.join(TRAINED_MODELS_FOLDER, 'l_min_10.pkl')
     clf = joblib.load(predictions_filename)
 
+    print('Loading validation data...')
     clf_input = SequenceClassifierInput(cached_dataset='1498490206_3_28519_GOOD_validation')
     train_data, test_data, *_ = clf_input.get_spectrum_train_test_data()  # ignoring labels
 
@@ -31,9 +34,13 @@ if __name__ == '__main__':
 
     # compute predictions and show stats
     print('Computing predictions...')
+    start_time = time.time()
     predictions = clf.predict(validation_data)
+    elapsed_time = (time.time() - start_time)
+
     total_sequences_num = len(validation_data)
     good_sequences_num = sum(1 for _ in filter(lambda x: x == 1, predictions))  # count positive predictions
+    print('\tTime:', timedelta(seconds=elapsed_time))
     print('\tFraction of good sequences: {:3.1f}%'.format(good_sequences_num / total_sequences_num))
 
     # dump results
