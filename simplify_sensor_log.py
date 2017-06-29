@@ -10,11 +10,10 @@ SYMBOLS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
 
 def simplify_sensor_log(sensor_log, readable=True):
     """
-    Translate the given sensor log in a symbols sequence that can be processed by MIM
-    (http://web.tecnico.ulisboa.pt/diogo.ferreira/mimcode/).
-    Notice that if readability of results is important, then MIM code allows only for a maximum number of distinct 
-    symbols equals to the size of English alphabet. Hence, in that case, a mapping between sensor ids and letters is 
-    automatically computed.
+    Translate the given sensor log in a symbols sequence, such that sequence classification techniques can be applied.
+    Notice that, for the sake of readability, we allows only for a maximum number of distinct symbols equals to the size
+    of English alphabet (that is enough according to the scope of this project). Then, in that case, a mapping between
+    sensor ids and letters is automatically computed.
 
     :type sensor_log: file
     :param sensor_log: the tab-separated file containing the sensor log.

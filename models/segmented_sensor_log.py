@@ -11,11 +11,11 @@ class BStep(object):
         """
         Gather the two sets of segments that must be combined to contribute to the validation set.
         """
-        self.segments = []         # the segments closed at this B-step.
-        self.compat_segments = []  # the segments opened after this B-step that are compatible.
+        self.closed_segments = []  # the segments closed at this B-step.
+        self.compat_segments = []  # the segments opened between this B-step and the next that are compatible.
 
-    def add_segment(self, s):
-        self.segments.append(s)
+    def add_closed_segment(self, s):
+        self.closed_segments.append(s)
 
     def add_compat_segment(self, s):
         self.compat_segments.append(s)
@@ -168,8 +168,8 @@ class SegmentedSensorLog(object):
             closed_segment = open_segments.pop(idx)          # remove segment from open list
             if len(closed_segment) >= self.noise_threshold:  # noise filtering
                 self.segments.append(closed_segment)
-                b_step.add_segment(closed_segment)
-        if b_step.segments:
+                b_step.add_closed_segment(closed_segment)
+        if b_step.closed_segments:
             self.b_steps.append(b_step)
 
     """ DEPRECATED FUNCTIONS """
